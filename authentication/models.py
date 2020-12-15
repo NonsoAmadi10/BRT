@@ -12,7 +12,8 @@ from .manager import UserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
 
-    username = models.CharField(db_index=True, max_length=255, unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
 
     # We also need a way to contact the user and a way for the user to identify
     # themselves when logging in. Since we need an email address for contacting
@@ -31,7 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # The `is_staff` flag is expected by Django to determine who can and cannot
     # log into the Django admin site. For most users, this flag will always be
     # falsed.
-    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -39,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case, we want that to be the email field.
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'is_admin']
 
     # Tells Django that the UserManager class defined above should manage
     # objects of this type.
@@ -66,20 +67,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self._generate_jwt_token()
 
     def get_full_name(self):
-        """
-        This method is required by Django for things like handling emails.
-        Typically, this would be the user's first and last name. Since we do
-        not store the user's real name, we return their username instead.
-        """
-        return self.username
-
-    def get_short_name(self):
-        """
-        This method is required by Django for things like handling emails.
-        Typically, this would be the user's first name. Since we do not store
-        the user's real name, we return their username instead.
-        """
-        return self.username
+        """ Allows us to call the full name especially when we want to send emails"""
+        return f'{self.first_name} {self.last_name}'
 
     def _generate_jwt_token(self):
         """
@@ -90,7 +79,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         token = jwt.encode({
             'id': self.pk,
-            'username': self.username,
+            'email': self.email,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'is_admin': self.is_admin,
             'exp': int(dt.strftime('%s'))
         }, settings.SECRET_KEY, algorithm='HS256')
 

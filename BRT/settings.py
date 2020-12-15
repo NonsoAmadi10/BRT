@@ -37,14 +37,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
+    'authentication.apps.AuthenticationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'authentication'
+    'factory'
 ]
 
 MIDDLEWARE = [
@@ -86,6 +87,18 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': path.join(BASE_DIR, 'db.sqlite3')
     }
+}
+
+# AUTH_UER_MODEL
+
+AUTH_USER_MODEL = 'authentication.User'
+
+
+REST_FRAMEWORK = {
+    'NON_FIELD_ERRORS_KEY': 'error',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'authentication.backends.JWTAuthentication',
+    ],
 }
 
 
