@@ -15,7 +15,7 @@ before_install:
   - export DJANGO_SETTINGS_MODULE=BRT.settings
   - export PYTHONPATH=$HOME/builds/NonsoAmadi10/BRT
   - pip install virtualenv
-  - mkvirtualenv brt
+  - virtualenv brt
 install:
   - pip install -r requirements.txt
 
