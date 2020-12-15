@@ -21,3 +21,6 @@ install:
 
 script:
   - sh ./build.sh
+
+after_success:
+  - coveralls
