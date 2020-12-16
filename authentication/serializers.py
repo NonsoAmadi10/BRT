@@ -34,13 +34,18 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Creates a user"""
-        new_user = User.objects.create_user(**validated_data)
-        return {
-            "first_name": new_user.first_name,
-            "last_name": new_user.last_name,
-            "email": new_user.email,
-            "is_admin": new_user.is_admin
-        }
+        if validated_data['is_admin']:
+            validated_data['is_staff'] = True
+            admin_user = User.objects.create_superuser(**validated_data)
+            return admin_user
+        else:
+            new_user = User.objects.create_user(**validated_data)
+            return {
+                "first_name": new_user.first_name,
+                "last_name": new_user.last_name,
+                "email": new_user.email,
+                "is_admin": new_user.is_admin
+            }
 
 
 class LoginSerializer(serializers.ModelSerializer):

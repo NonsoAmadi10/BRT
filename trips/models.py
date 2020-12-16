@@ -9,7 +9,6 @@ class Bus(models.Model):
     year = models.CharField(blank=False, max_length=4)
     capacity = models.IntegerField(default=18)
     model = models.CharField(max_length=100, blank=False)
-    curr_capacity = models.IntegerField(default=0)
 
     def __str__(self):
         return self.number_plate
@@ -25,3 +24,8 @@ class Trip(models.Model):
     destination = models.CharField(max_length=255, blank=False, null=False)
     trip_date = models.DateField()
     fare = models.FloatField(default=0.0)
+    curr_bus_capacity = models.IntegerField(default=0)
+
+    @property
+    def bus_full(self):
+        return self.curr_bus_capacity == self.bus.capacity

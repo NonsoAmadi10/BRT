@@ -7,7 +7,7 @@ from datetime import datetime
 class BusesAndTripsTestCase(TestCase):
     def setUp(self):
         self._bus = Bus.objects.create(
-            number_plate="EX85000", manufacturer="toyota", year="2020", curr_capacity=1)
+            number_plate="EX85000", manufacturer="toyota", year="2020")
 
         self._trip = Trip.objects.create(bus_id=self._bus, origin="ikotun", destination="ikeja",
                                          trip_date=datetime.strptime('12-27-2020', '%m-%d-%Y').date(), fare=150.0)
