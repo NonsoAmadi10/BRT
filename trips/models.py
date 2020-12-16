@@ -8,7 +8,7 @@ class Bus(models.Model):
     manufacturer = models.CharField(max_length=255, blank=False)
     year = models.CharField(blank=False, max_length=4)
     capacity = models.IntegerField(default=18)
-    model = models.CharField(max_length=100)
+    model = models.CharField(max_length=100, blank=False)
     curr_capacity = models.IntegerField(default=0)
 
     def __str__(self):
