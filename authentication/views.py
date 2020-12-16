@@ -3,8 +3,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
-from .serializers import (RegistrationSerializer, LoginSerializer)
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from .serializers import (RegistrationSerializer,
+                          LoginSerializer, UserListQuerySerializer)
 from .messages.success import USER_CREATED, LOGIN_SUCCESS
 from .models import User
 from BRT.response import success_response
@@ -17,6 +19,24 @@ class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
 
+    @swagger_auto_schema(
+        operation_description="apiview post description override",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['email', 'password',
+                      'first_name', 'last_name', 'is_admin'],
+            properties={
+                "status": openapi.Schema(type=openapi.TYPE_STRING),
+                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+                'first_name': openapi.Schema(type=openapi.TYPE_STRING),
+                'last_name': openapi.Schema(type=openapi.TYPE_STRING),
+                'is_admin': openapi.Schema(type=openapi.TYPE_BOOLEAN)
+            },
+        ),
+        security=[],
+        tags=['Users'],
+    )
     def post(self, request):
         """Creates a user
             Args:
@@ -47,6 +67,19 @@ class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['email', 'password'],
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+
+            },
+        ),
+        responses={200: LoginSerializer(many=False)},
+        tags=['Users'],
+    )
     def post(self, request):
         """ Logs a User \n
             args: 

@@ -124,3 +124,14 @@ class LoginSerializer(serializers.ModelSerializer):
             'is_admin': user.is_admin,
             'token': user.token
         }
+
+
+class UserListQuerySerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+    # Ensure passwords are at least 8 characters long, no longer than 128
+    # characters, and can not be read by the client.
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
