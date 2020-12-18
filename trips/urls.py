@@ -1,8 +1,14 @@
-from django.conf.urls import url
+from django.urls import path, include
 
-from .views import BusListViews
+from .views import BusListViews, TripsViews
+from rest_framework.routers import DefaultRouter
 
 app_name = 'trips'
+
+router = DefaultRouter()
+router.register(r'', TripsViews, basename='trips')
 urlpatterns = [
-    url(r'bus', BusListViews.as_view(), name="bus"),
+    path('bus', BusListViews.as_view(), name="bus"),
+    path('', include(router.urls))
+
 ]

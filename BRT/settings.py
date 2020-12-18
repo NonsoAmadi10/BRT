@@ -104,7 +104,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-        'trips.permissions.IsAdminOnly',
+        'trips.permissions.IsAdminOrReadOnly',
     ),
 }
 
@@ -150,3 +150,5 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+APPEND_SLASH = False

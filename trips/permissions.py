@@ -1,14 +1,10 @@
-from rest_framework.permissions import BasePermission, IsAdminUser
-from authentication.models import User
+from rest_framework.permissions import BasePermission, IsAdminUser, IsAuthenticated
 
 
-class IsAdminOnly(BasePermission):
-    message = 'You must be an admin to perform this action'
-    SAFE_METHODS = ['GET', 'PUT', 'OPTIONS', 'HEAD', 'PATCH']
+class IsAdminOrReadOnly(BasePermission):
+    SAFE_METHODS = ['OPTIONS', 'HEAD', 'GET']
 
     def has_permission(self, request, view):
-        if request.method in self.SAFE_METHODS:
+        if IsAuthenticated().has_permission(request, view) and request.method in self.SAFE_METHODS:
             return True
-
-    def has_object_permission(self, request, view):
         return IsAdminUser().has_permission(request, view)

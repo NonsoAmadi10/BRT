@@ -12,4 +12,4 @@ class TripSerializer(ModelSerializer):
     class Meta:
         model = Trip
         fields = '__all__'
-        read_only_fields = ('curr_bus_capacity',)
+        read_only_fields = ('curr_bus_capacity', 'id')

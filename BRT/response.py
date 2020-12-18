@@ -17,7 +17,7 @@ def failure_response(data, message, status):
     data = {
         'status': 'Failure',
         'errors': data,
-        'message': message
+        'error': message
     }
 
     return Response(data, status=status)

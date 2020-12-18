@@ -9,7 +9,7 @@ from trips.models import Bus
 from trips.serializers import BusSerializer
 
 
-class TestBusEndpoint(APITestCase):
+class TestTripBusEndpoint(APITestCase):
 
     def _auth_header(self, token):
         return f'Bearer {token}'
@@ -17,6 +17,10 @@ class TestBusEndpoint(APITestCase):
     def _login(self, data):
         url = reverse('auth:login')
         return self.client.post(url, data, format='json')
+
+    def _create_bus(self, data, auth):
+        url = reverse("trips:bus")
+        return self.client.post(url, data, format="json", HTTP_AUTHORIZATION=auth)
 
     def setUp(self):
         password = 'password'
@@ -53,6 +57,7 @@ class TestBusEndpoint(APITestCase):
             "year": "2020",
             "capacity": 20
         }
+        self.bus = self._create_bus(self._bus_data, self._admin_header).data
 
         self._bus_data_two = {
             "number_plate": "AJM120P",
@@ -72,38 +77,74 @@ class TestBusEndpoint(APITestCase):
 
         self.buses = BusFactory(**self._bus_data_two)
 
-    def test_create_bus_with_admin_roles(self):
-        url = reverse("trips:bus")
+        self._trip_data = {
+            "bus_id": self.buses,
+            "origin": "ikotun",
+            "destination": "ikeja",
+            "trip_date": date.today(),
+            "fare": 100.00,
+            "status": "active"
+        }
+        self.trips = TripFactory(**self._trip_data)
+        self._trip_data_two = {
+            "bus_id": 1,
+            "origin": "ikeja",
+            "destination": "ikotun",
+            "trip_date": date.today(),
+            "fare": 100.00,
+            "status": "active"
+        }
+        self._incorrect_date_data = {
+            "bus_id": 1,
+            "origin": "ikeja",
+            "destination": "ikotun",
+            "trip_date": "12-10-2020",
+            "fare": 200.00,
+            "status": "active"
+        }
+
+    def test_create_trip_with_admin_roles(self):
+        url = '/api/v1/trips/'
         response = self.client.post(
-            url, data=self._bus_data_three, format="json", HTTP_AUTHORIZATION=self._admin_header)
+            url, HTTP_AUTHORIZATION=self._admin_header, data=self._trip_data_two, format="json")
         response_data = response.data
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        assert 'id' in response_data
+        assert response_data['status'].startswith('Success')
+        self.assertEqual(response_data['data']['destination'], 'ikotun')
 
-    def test_create_bus_without_admin_roles(self):
-        url = reverse("trips:bus")
+    def test_create_trip_with_out_admin_roles(self):
+        url = '/api/v1/trips/'
         response = self.client.post(
-            url, data=self._bus_data_three, format="json", HTTP_AUTHORIZATION=self._header)
+            url, HTTP_AUTHORIZATION=self._header, data=self._trip_data_two, format="json")
         response_data = response.data
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
             response_data['detail'], 'You do not have permission to perform this action.')
 
-    def test_get_bus_data_with_admin_roles(self):
-        url = reverse("trips:bus")
-        response = self.client.get(
-            url, HTTP_AUTHORIZATION=self._admin_header)
+    def test_create_trip_incorrect_date(self):
+        url = '/api/v1/trips/'
+        response = self.client.post(
+            url, HTTP_AUTHORIZATION=self._admin_header, data=self._incorrect_date_data, format="json")
         response_data = response.data
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response_data[0]['number_plate'], self._bus_data_two['number_plate'])
+            response_data['error'], 'Incorrect data format, should be YYYY-MM-DD')
 
-    def test_get_bus_data_without_admin_roles(self):
-        url = reverse("trips:bus")
+    def test_create_trip_incorrect_date(self):
+        url = '/api/v1/trips/'
+        self._incorrect_date_data['trip_date'] = '2020-12-02'
+        response = self.client.post(
+            url, HTTP_AUTHORIZATION=self._admin_header, data=self._incorrect_date_data, format="json")
+        response_data = response.data
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response_data['error'], 'Trip date can only include today and beyond')
+
+    def test_get_trip_data(self):
+        url = '/api/v1/trips/'
         response = self.client.get(
             url, HTTP_AUTHORIZATION=self._header)
         response_data = response.data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(
-            response_data['detail'], 'You do not have permission to perform this action.')
+        assert len(response_data['data']) == 1
