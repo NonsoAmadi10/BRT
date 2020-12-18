@@ -38,6 +38,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'rest_framework',
+    'trips',
     'authentication.apps.AuthenticationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'factory'
+    'factory',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -99,6 +101,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'authentication.backends.JWTAuthentication',
     ],
+
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        'trips.permissions.IsAdminOrReadOnly',
+    ),
 }
 
 
@@ -143,3 +150,5 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+APPEND_SLASH = False
