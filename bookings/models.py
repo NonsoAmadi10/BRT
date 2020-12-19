@@ -9,7 +9,7 @@ from trips.models import Trip, Bus
 class Booking(models.Model):
     user_id = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='owner', on_delete=models.CASCADE)
-    trip_id = models.ForeignKey(
+    trip_id = models.OneToOneField(
         'trips.Trip', related_name='trip', on_delete=models.CASCADE)
     #seat_number = models.IntegerField()
     booking_number = models.CharField(

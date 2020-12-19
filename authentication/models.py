@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         Returns a string representation of this `User`.
         This string is used when a `User` is printed in the console.
         """
-        return self.email
+        return f'{self.id}'
 
     class Meta:
         db_table = 'users'
