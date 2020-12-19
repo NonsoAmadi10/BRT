@@ -106,6 +106,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
         'trips.permissions.IsAdminOrReadOnly',
+        'bookings.permissions.IsAdminOrUser',
     ),
 }
 

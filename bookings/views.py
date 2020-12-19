@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, date
 from django.shortcuts import get_object_or_404
 from .serializers import BookingSerializer
 from bookings.models import Booking
+from bookings.permissions import IsAdminOrUser
 from trips.models import Trip, Bus
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
@@ -15,8 +16,10 @@ from trips.utils import convert_date
 
 
 class BookingViewSet(viewsets.ModelViewSet):
+    """ Allows Users Perform all booking operations """
+
     serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, IsAdminOrUser]
     query_set = Booking.objects.all().select_related()
 
     def get_query_set(self):
@@ -58,3 +61,19 @@ class BookingViewSet(viewsets.ModelViewSet):
             owner = data.filter(user_id__pk=request.user.id)
             serializer = self.serializer_class(owner, many=True)
             return success_response(serializer.data, 'Your Bookings have been retrieved', status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        responses={200: 'not found'},
+        tags=['not_available'],
+    )
+    def update(self, request, pk=None):
+        """Not available"""
+        pass
+
+    @swagger_auto_schema(
+        responses={200: 'not found'},
+        tags=['not_available'],
+    )
+    def partial_update(self, request, pk=None):
+        """Not available"""
+        pass
