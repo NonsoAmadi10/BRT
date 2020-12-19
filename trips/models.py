@@ -42,4 +42,4 @@ class Trip(models.Model):
 
     @property
     def bus_full(self):
-        return self.curr_bus_capacity == self.bus.capacity
+        return self.curr_bus_capacity == self.bus_id.capacity

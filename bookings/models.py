@@ -11,6 +11,8 @@ class Booking(models.Model):
         settings.AUTH_USER_MODEL, related_name='owner', on_delete=models.CASCADE)
     trip_id = models.OneToOneField(
         'trips.Trip', related_name='trip', on_delete=models.CASCADE)
+    bus_id = models.ForeignKey(
+        Bus, related_name='ride', on_delete=models.CASCADE)
     #seat_number = models.IntegerField()
     booking_number = models.CharField(
         max_length=155, default=generate_booking_number())
