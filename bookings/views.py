@@ -17,7 +17,10 @@ from trips.utils import convert_date
 class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated, ]
-    query_set = Booking.objects.select_related('owner', 'trips', 'ride')
+    query_set = Booking.objects.all().select_related()
+
+    def get_query_set(self):
+        return self.query_set
 
     def create(self, request, *args, **kwargs):
         """ Creates Trip Bookings for all users who use this platform"""
@@ -44,3 +47,14 @@ class BookingViewSet(viewsets.ModelViewSet):
                 return failure_response({}, 'trip id specified does  not exist', status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
             return failure_response({}, 'You have made this booking before', status.HTTP_409_CONFLICT)
+
+    def list(self, request, *arg, **kwargs):
+        """ Lists all bookings made by users"""
+        data = Booking.objects.all().select_related()
+        if request.user.is_admin:
+            serializer = self.serializer_class(data, many=True)
+            return success_response(serializer.data, 'All Bookings', status.HTTP_200_OK)
+        else:
+            owner = data.filter(user_id__pk=request.user.id)
+            serializer = self.serializer_class(owner, many=True)
+            return success_response(serializer.data, 'Your Bookings have been retrieved', status.HTTP_200_OK)

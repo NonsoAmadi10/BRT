@@ -18,6 +18,8 @@ class BookingSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at', 'booking_number')
 
     def create(self, validate_data):
+        """ creates a new booking list and returns the serialized data"""
+
         user = self.context['user']
         # Check if trip exists
         get_trip = Trip.objects.get(
