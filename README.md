@@ -10,9 +10,11 @@
 - View all bookings
 - Book a seat
 ## Technologies Used
-DRF (API)
-SWAGGER (API Documentation)
-PYLINT
+- DRF (API)
+- SWAGGER (API Documentation)
+- PYLINT
+- Docker 
+- Docker Compose
 ### API Documentation
  - 'http://localhost:8000/api/v1/docs/
 
@@ -31,7 +33,7 @@ You might get the error below if you are on a Windows system. Worry not, all you
 
 - Clone the flighty repo and cd into it:
 
->git clone git@github.com:NonsoAmadi10/BRT.git
+> git clone git@github.com:NonsoAmadi10/BRT.git
 
 -Install dependencies:
 
@@ -42,6 +44,7 @@ You might get the error below if you are on a Windows system. Worry not, all you
 - Create a .env file
 
 >SECRET_KEY=<JWT-SECRET-KEY>
+
 >DJANGO_ENV=<YOUR ENVIRONMENT> This should be set to development
 
 - Activate a virtual environment:
@@ -50,10 +53,10 @@ You might get the error below if you are on a Windows system. Worry not, all you
 - Run the application:
 
  `python manage.py runserver`
->Django version 2.1.5, using settings 'BRT.settings'
+> Django version 2.1.5, using settings 'BRT.settings'
 > export PATH=$PATH:/usr/local/sbin
->Deactivate the virtual environment once you're done:
->exit 
+> Deactivate the virtual environment once you're done:
+> exit 
 
 #### Run Test
 
