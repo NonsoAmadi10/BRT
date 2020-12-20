@@ -140,3 +140,9 @@ class UserListQuerySerializer(serializers.Serializer):
         min_length=8,
         write_only=True
     )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("email", "last_name", "first_name")
